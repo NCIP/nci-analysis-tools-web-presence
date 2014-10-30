@@ -42,7 +42,7 @@ function bind_reference_row() {
     	var row = $(this).attr("row");
     	var col = $(this).attr("col");
 		clear_reference_row();
-		$(this).html("<img src='./images/checkbox.png' height='18' width='18' alt='check'/>");
+		$(this).html("<img src='/common/images/checkbox.png' height='18' width='18' alt='check'/>");
 		$(this).parent().addClass("reference_row")
 			.children().last().empty().html("&nbsp");
     });	
@@ -107,7 +107,7 @@ function change_value (field, new_value) {
 }
 
 function clear_reference_row() {
-	$("#inputdata").find(".reference").html("<img src='./images/uncheckbox.png' height='18' width='18' alt='uncheck'/>");
+	$("#inputdata").find(".reference").html("<img src='/common/images/uncheckbox.png' height='18' width='18' alt='uncheck'/>");
 	$("#inputdata").find("tr").each (function () {
 		$(this).removeClass("reference_row");
 		if (!$(this).hasClass('non-data-row')) {
@@ -128,7 +128,7 @@ function add_new_row() {
 	var num_rows = $("#inputdata").find("tr").length - 3;
 	$("#inputdata").find("tr").last().prev().after("<tr row='" + num_rows + "'>" +
 			"<td><b>" + (num_rows+1) + "</b></td>" +
-			"<td class='reference' row='" + num_rows + "' col='reference'><img src='./images/uncheckbox.png' height='18' width='18'  alt='uncheck'/></td>" + 
+			"<td class='reference' row='" + num_rows + "' col='reference'><img src='/common/images/uncheckbox.png' height='18' width='18'  alt='uncheck'/></td>" + 
 			"<td class='input sensitivity' row='" + num_rows + "' col='sensitivity'>&nbsp;</td>" +
 			"<td class='input specificity' row='" + num_rows + "' col='specificity'>&nbsp;</td>" +
 			"<td><BUTTON class='remove_row_button'>Remove</BUTTON></td>" +
@@ -162,21 +162,21 @@ function do_calculation()
     var refSpec;
     var refSens;
 	
-    var sensArray = "c(";
-    var specArray = "c(";
-    var prev = "c(";
-    var sensArrayWithRef = "c(";
-    var specArrayWithRef = "c(";
-    var labels = "c(";
+    var sensArray = "";
+    var specArray = "";
+    var prev = "";
+    var sensArrayWithRef = "";
+    var specArrayWithRef = "";
+    var labels = "";
 
     var prevalence = $("#prevalence").val();
     
     if (!isNumberBetweenZeroAndOne(prevalence)) {
         validPrevValue = false;
-    	prev = "c(0)"; 
+    	prev = 0;
     } else {
         validPrevValue = true;
-        prev = "c(" + prevalence + ")";
+        prev = prevalence;
     }
     
     var hasNoErrors = true;
@@ -204,12 +204,12 @@ function do_calculation()
     	
     	
     });
-    sensArray = sensArray.slice(0, -1) + ")";
-    specArray = specArray.slice(0, -1) + ")";
-    sensArrayWithRef = sensArrayWithRef.slice(0, -1) + ")";
-    specArrayWithRef = specArrayWithRef.slice(0, -1) + ")";
+    sensArray = sensArray.slice(0, -1);
+    specArray = specArray.slice(0, -1);
+    sensArrayWithRef = sensArrayWithRef.slice(0, -1);
+    specArrayWithRef = specArrayWithRef.slice(0, -1);
     
-    labels = labels.slice(0, -1) + ")";
+    labels = labels.slice(0, -1);
 
     if (!hasNoErrors) {
     	alert ("Error with input data.  Not all values are numbers between Zero and One");
@@ -221,8 +221,8 @@ function do_calculation()
     if (validPrevValue)
     {
         $.ajax({
-            type: "GET",
-            url: "http://"+hostname+"/BiomarkerComparison/cal",
+            type: "POST",
+            url: "http://"+hostname+"/bcRest/",
             data:{numberOfValues: "8",
                   refSpec: refSpec,
                   refSens: refSens,
@@ -233,8 +233,10 @@ function do_calculation()
                   prev: prev,
                   labels: labels,
                   unique_key: uniqueKey},
-            dataType:"jsonp",
-            success:set_data,
+            dataType:"json",
+            success:function(data) {
+            	set_data(data);
+            },
             error: function (request, status, error) {
                 alert(request.responseText);
             }
@@ -243,8 +245,8 @@ function do_calculation()
     else
     {
         $.ajax({
-            type: "GET",
-            url: "http://"+hostname+"/BiomarkerComparison/cal",
+            type: "POST",
+            url: "http://"+hostname+"/bcRest/",
             data:{numberOfValues: "7",
                   refSpec: refSpec,
                   refSens: refSens,
@@ -254,8 +256,10 @@ function do_calculation()
                   sensArrayWithRef: sensArrayWithRef,
                   labels: labels,
                   unique_key: uniqueKey},
-            dataType:"jsonp",
-            success:set_data,
+            dataType:"json",
+            success:function(data) {
+            	set_data(data);
+            },
             error: function (request, status, error) {
                 alert(request.responseText);
             }
@@ -271,8 +275,8 @@ function isNumberBetweenZeroAndOne(n) {
 }
 
 function refreshGraph(drawgraph) {
-   if (drawgraph == 1) graph_file = "./tmp/"+uniqueKey+"SensSpecLR.jpg?";
-   else graph_file = "./images/fail-message.jpg?";
+   if (drawgraph == 1) graph_file = "./tmp/SensSpecLR-"+uniqueKey+".png?";
+   else graph_file = "/common/images/fail-message.jpg?";
 
    d = new Date();
    $("#graph").attr("src", graph_file+d.getTime());
@@ -280,23 +284,21 @@ function refreshGraph(drawgraph) {
 
 function set_data(dt)
 {
-        var jsonString;
-        var jsonObject;
-        for (property in dt) {
-                jsonString = dt[property];
-        }
-        refreshGraph(1);
-	$("#output").empty();
-        $("#output th").remove();
-        jsonObject = $.parseJSON(jsonString);
-	if (validPrevValue)
+   var jsonObject=JSON.parse(JSON.stringify(dt));
+ 
+   refreshGraph(1);
+   $("#output").empty();
+   $("#output th").remove();
+   if (validPrevValue)
 	{
-        	createOutputTableWithPrev(jsonObject)
+        createOutputTableWithPrev(jsonObject)
 	}
 	else
 	{
-        	createOutputTable(jsonObject)
+        createOutputTable(jsonObject)
 	}
+   //from glossary.js for term definition popup in the output
+	bindTermToDefine();
 }
 
 function jsonToCell(obj)
@@ -355,10 +357,10 @@ function createOutputTable(jsondata)
     $("#output").append(top_header_row);
 
     var header_row = $("<tr>");
-    header_row.append("<th class='header'>Sensitivity</th>");
-    header_row.append("<th class='header'>Specificity</th>");
-    header_row.append("<th class='header'>LR+</th>");
-    header_row.append("<th class='header'>LR-</th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='Sens2' data-term='Sens'>Sensitivity</div><div class='popupDefinition' id='Sens2Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='Spec2' data-term='Spec'>Specificity</div><div class='popupDefinition' id='Spec2Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='LRP2' data-term='LRP'>LR+</div><div class='popupDefinition' id='LRP2Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='LRN2' data-term='LRN'>LR-</div><div class='popupDefinition' id='LRN2Definition'></div></th>");
     $("#output").append(header_row);
 	
 	for (var each in jsondata) {
@@ -374,12 +376,12 @@ function createOutputTableWithPrev(jsondata)
     $("#output").append(top_header_row);
 
     var header_row = $("<tr>");
-    header_row.append("<th class='header'>Sensitivity</th>");
-    header_row.append("<th class='header'>Specificity</th>");
-    header_row.append("<th class='header'>LR+</th>");
-    header_row.append("<th class='header'>LR-</th>");
-    header_row.append("<th class='header'>PPV</th>");
-    header_row.append("<th class='header'>cNPV</th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='Sens3' data-term='Sens'>Sensitivity</div><div class='popupDefinition' id='Sens3Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='Spec3' data-term='Spec'>Specificity</div><div class='popupDefinition' id='Spec3Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='LRP3' data-term='LRP'>LR+</div><div class='popupDefinition' id='LRP3Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='LRN3' data-term='LRN'>LR-</div><div class='popupDefinition' id='LRN3Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='PPV3' data-term='PPV'>PPV</div><div class='popupDefinition' id='PPV3Definition'></div></th>");
+    header_row.append("<th class='header'><div class='termToDefine' id='cNPV3' data-term='cNPV'>cNPV</div><div class='popupDefinition' id='cNPV3Definition'></div></th>");
     $("#output").append(header_row);
 	
 	for (var each in jsondata) {

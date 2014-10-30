@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, render_template, Response, abort, request, make_response, url_for, jsonify
+from flask import Flask, Response, abort, request, make_response, url_for, jsonify
 from functools import wraps
 from flask import current_app
 
@@ -16,13 +16,9 @@ import numpy as np
 from pandas import DataFrame
 import pandas.rpy.common as com
 import urllib
+import time
 
-app = Flask(__name__, static_folder='', static_url_path='/')
-#app = Flask(__name__, static_folder='static', static_url_path='/static')
-
-@app.route('/')
-def index():
-    return render_template('index.html')
+app = Flask(__name__)
 
 def jsonp(func):
     """Wraps JSONified output for JSONP requests."""
@@ -30,11 +26,10 @@ def jsonp(func):
     def decorated_function(*args, **kwargs):
         callback = request.args.get('callback', False)
         if callback:
-            #data = str(func(*args, **kwargs).data)
-            #content = str(callback) + '(' + data + ')'
+            data = str(func(*args, **kwargs).data)
+            content = str(callback) + '(' + data + ')'
             #mimetype = 'application/javascript'
             mimetype = 'application/json'
-            content=func(*args, **kwargs).data
             return current_app.response_class(content, mimetype=mimetype)
         else:
             return func(*args, **kwargs)
@@ -45,18 +40,16 @@ def setRWorkingDirectory():
     sourceReturn1 = robjects.r("path")
     return ""
 
-@app.route('/bcRest/', methods = ['GET','POST'])
+@app.route('/meanstoriskRest/', methods = ['GET','POST'])
 @jsonp
 def callRFunction():
-    rSource = robjects.r('source')
-    rSource('./BiomarkerComparisonWrapper.R')
-    r_getname_getData = robjects.globalenv['getDataJSON']
-    thestream=request.stream.read();
-    print " input stream "+str(thestream);
-    jsondata = r_getname_getData(thestream)
-    print "json string >> "+str(jsondata[0]);
+    print "Data Start Time: " + str(time.time());
+    robjects.r('''source('./meanstoriskWrapper.R')''')
+    r_getname_getApcData = robjects.globalenv['getDataJSON']
+    stream = request.stream.read()
+    jsondata = r_getname_getApcData(stream)
+    print "After Data Calculation: " + str(time.time());
     return jsondata[0]
-    
 
 
 import argparse

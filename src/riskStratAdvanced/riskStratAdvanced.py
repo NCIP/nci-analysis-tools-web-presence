@@ -30,11 +30,10 @@ def jsonp(func):
     def decorated_function(*args, **kwargs):
         callback = request.args.get('callback', False)
         if callback:
-            #data = str(func(*args, **kwargs).data)
-            #content = str(callback) + '(' + data + ')'
+            data = str(func(*args, **kwargs).data)
+            content = str(callback) + '(' + data + ')'
             #mimetype = 'application/javascript'
             mimetype = 'application/json'
-            content=func(*args, **kwargs).data
             return current_app.response_class(content, mimetype=mimetype)
         else:
             return func(*args, **kwargs)
@@ -45,18 +44,18 @@ def setRWorkingDirectory():
     sourceReturn1 = robjects.r("path")
     return ""
 
-@app.route('/bcRest/', methods = ['GET','POST'])
+@app.route('/riskStratAdvRest/cal', methods = ['POST'])
 @jsonp
 def callRFunction():
     rSource = robjects.r('source')
-    rSource('./BiomarkerComparisonWrapper.R')
+    rSource('./input.R')
     r_getname_getData = robjects.globalenv['getDataJSON']
     thestream=request.stream.read();
     print " input stream "+str(thestream);
     jsondata = r_getname_getData(thestream)
     print "json string >> "+str(jsondata[0]);
     return jsondata[0]
-    
+
 
 
 import argparse

@@ -35,8 +35,7 @@ of the rate table represent birth cohorts.</p>
 
 <p> Visit the following sections to learn more about the APC web tool:</p>
 <ul>
-	<li><a href='#started'>Getting started</a> - Learn how to enter data into the tool, get answers to frequently 
-	asked questions, and where to go for technical support.</li>
+	<li><a href='#started'>Getting started</a> - Learn how to enter data into the tool</li>
 	<li><a href='#example'>Sample data</a> - Enter any of these sample datasets to see the tool in action. </li>
 	<li><a href='#whatitdoes'>What it does</a> - Find out what outputs are produced </li>
 	<li><a href='#savingyourresults'>Saving your results</a> - Find out how to save raw output as an Excel Workbook, R Workspace, or text file. </li>
@@ -216,7 +215,7 @@ The data can be input by copy-and-paste from an Excel worksheet or file upload o
 <p>The most important functions calculated by the web tool are summarized in the <u><a href="#keyfunctions">Table of Key Functions</a></u> using the following conventions: </p>
 <ul>
 	<li>The APC model is defined over <i>A</i> age groups and <i>P</i> calendar periods with equal intervals. </li>
-	<li>The central age group, calendar period, and birth cohort define standard <B>reference values</B> <i>a</i>, <i>p</i> and <i>c</i>, respectively. </li>
+	<li>The central age group, calendar period, and birth cohort define standard <B>reference values</B> <i>a0</i>, <i>p0</i> and <i>c0</i>, respectively. </li>
 	<li>When there is an even number of age, period, or cohort categories, the reference value is the lower of the two central values.  </li>
 	<li>All values labeled <B>CI Lo</B> are lower 95% confidence limits. All values labeled <B>CI Hi</B> are upper 95% confidence limits.</li>
 </ul>
@@ -228,7 +227,7 @@ The data can be input by copy-and-paste from an Excel worksheet or file upload o
 	</tr>
 	<tr>
 		<td>Fitted Temporal Trend</td>
-		<td>Expected age-adjusted rates over time</td>
+		<td>Expected rates over time in reference age group <i>a0</i> adjusted for cohort effects</td>
 	</tr>
 	<tr>
 		<td>Net Drift</td>
@@ -240,21 +239,19 @@ The data can be input by copy-and-paste from an Excel worksheet or file upload o
 	</tr>
 	<tr>
 		<td>Cross-Sectional Age Curve (Cross Age)</td>
-		<td>Expected age-specific rates within a given calendar period</td>
+		<td>Expected age-specific rates in reference period <i>p0</i> adjusted for cohort effects</td>
 	</tr>
 	<tr>
 		<td>Longitudinal Age Curve (Long Age)</td>
-		<td>Expected age-specific rates for a given number of birth cohorts</td>
+		<td>Expected age-specific rates in reference cohort <i>c0</i> adjusted for period effects</td>
 	</tr>
 	<tr>
 		<td>Period Rate Ratios (PeriodRR)</td>
-		<td>Ratio of age-specific rates in period relative to reference period  
-</td>
+		<td>Ratio of age-specific rates in each period relative to reference period <i>p0</i></td>
 	</tr>
 	<tr>
 		<td>Cohort Rate Ratios (CohortRR)</td>
-		<td>Ratio of age-specific rates in cohort relative to reference cohort 
-</td>
+		<td>Ratio of age-specific rates in each cohort relative to reference cohort <i>c0</i></td>
 	</tr>
 </table>
 <ul>
@@ -273,7 +270,7 @@ The data can be input by copy-and-paste from an Excel worksheet or file upload o
 	<tr>
 		<td>Net drift = 0</td>
 		<td>Fitted temporal trends are stable (i.e., flat with no change) over time. <br />
-Fitted longitudinal and cross-sectional age curves are equal.
+Fitted longitudinal and cross-sectional age curves are proportional.
 		</td>
 		<td>1
 		</td>
@@ -310,7 +307,7 @@ Longitudinal age curve describes age incidence pattern in every cohort.
 	<tr>
 		<td>All local drifts = the net drift</td>
 		<td>Temporal patterns are the same in every age group.</td>
-		<td><i>A</i></td>
+		<td><i>A-1</i> if <i>A=P</i>, <i>A</i> otherwise </td>
 	</tr>
 
 </table>
@@ -330,7 +327,9 @@ Longitudinal age curve describes age incidence pattern in every cohort.
 <li><i><b>Can my Populations include zeroes?</b></i> No, zero population counts will generate errors because the corresponding rates are undefined (you can't divide by zero!)</li>
 <li><i><b>What algorithm do you use to estimate the parameters and functions?</b></i> We use the statistical method of weighted least squares and the assumption that the count data follow a Poisson distribution allowing for extra-Poisson variation. </li>
 <li><i><b>What software do you use?</b></i> Our calculations are carried out using the R environment for statistical computing and graphics.</li>
-<li><i><b>Are your R programs available?</b></i> Yes, our R programs are freely available. You can obtain a copy of our code <a href="https://github.com/NCIP/nci-analysis-tools-web-presence/blob/master/src/apc/apcLatest.R" target="code">here</a>.</li>
+<li><i><b>Are your R programs available?</b></i> Yes, our R programs are freely available. You can obtain a copy of our code <a href="https://github.com/CBIIT/nci-analysis-tools-web-presence/blob/master/src/apc/apc.R" target="code">here</a>.</li>
+<li><i><b>Where do I go for technical support?</b></i> Please send an <a href="mailto:NCIAPCWebToolAdmin@mail.nih.gov?subject=APC tool support" title="APC Tool Technical Support">e-mail</a> to our technical support team.
+<li><i><b>What browsers does the web tool support?</b></i> The web tool has been tested to work with Internet Explorer 10, Firefox and Chrome. The file upload feature currently does not work with Internet Explorer 9 and below.
 </ul>
 </div> <!-- blockcontent -->
 

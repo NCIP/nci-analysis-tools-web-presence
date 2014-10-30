@@ -5,7 +5,7 @@ library('stringr');
 #source ('~/myproject/nci-analysis-tools-web-presence/src/apc/writeToExcel.R')
 
 # Use these directories in production
-source ('apcLatest.R');
+source ('apc.R');
 source ('writeToExcel.R')
 
 # Use These directories when testing locally running a Flask Server
@@ -135,6 +135,7 @@ createPanCanList <- function (inputList) {
 }
 
 getGraph <- function (apcOutput, keyGraphName, uniqueId) {
+  dir.create(imageDirectory);
   imageFileName = paste(imageDirectory, keyGraphName, uniqueId, ".png", sep = '');
   png(file = imageFileName , units="in", width=10, height=8, res=150);
   line.apc(apcOutput, keyGraphName);
