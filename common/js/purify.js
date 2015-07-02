@@ -36,11 +36,7 @@
     var HTMLBodyElement = window.HTMLBodyElement;
     var HTMLTemplateElement = window.HTMLTemplateElement;
     var NodeFilter = window.NodeFilter;
-<<<<<<< HEAD
     var NamedNodeMap = window.NamedNodeMap;
-=======
-    var NamedNodeMap = window.NamedNodeMap || window.MozNamedAttrMap;
->>>>>>> 784418ac9ad179e3089ad104582d4f0f07cdd53f
     var Text = window.Text;
 
     var hooks = {};
@@ -142,15 +138,9 @@
         'font-size','font-size-adjust','font-stretch','font-style','font-variant',
         'front-weight','image-rendering','in','in2','k1','k2','k3','k4','kerning',
         'letter-spacing','lighting-color','local','marker-end','marker-mid',
-<<<<<<< HEAD
         'marker-start','max','mask','mode','min','operator','opacity','order',
         'overflow','paint-order','path','points','r','rx','ry','radius','restart',
         'scale','seed','shape-rendering','stop-color','stop-opacity',
-=======
-        'marker-start','max','mask','mode','min','offset','operator','opacity',
-        'order','overflow','paint-order','path','points','r','rx','ry','radius',
-        'restart','scale','seed','shape-rendering','stop-color','stop-opacity',
->>>>>>> 784418ac9ad179e3089ad104582d4f0f07cdd53f
         'stroke-dasharray','stroke-dashoffset','stroke-linecap','stroke-linejoin',
         'stroke-miterlimit','stroke-opacity','stroke','stroke-width','transform',
         'text-anchor','text-decoration','text-rendering','u1','u2','viewbox',
