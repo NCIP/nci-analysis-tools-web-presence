@@ -13,14 +13,14 @@
 
     (Ex.) $.extend(Glossary, yourGlossaryObject);
 
-    Finally, bind the event handler, passing the class names for 
+    Finally, bind the event handler, passing the class names for
     the title and content elements inside the popover.
 
-    $(document).on("click", ".termToDefine", 
+    $(document).on("click", ".termToDefine",
     {template: templateString, titleClass: titleClassName, contentClass: contentClassName }, termDisplay);
 
 **/
-var default_template = "<div class='popover' role='tooltip'><div class='arrow'></div><h3 class='popover-title'></h3><div class='popover-content'></div></div>";
+var default_template = "<div><div class='arrow'></div><div class='default-tooltip-title'></div><div class='default-tooltip-content'></div></div>";
 
 var Glossary = {
     AUC: {
@@ -90,9 +90,9 @@ function bindTermToDefine() {
             var termName = $(this).data("term");
 
             var id = termName;
-            if($(this).attr("id") != undefined) 
-                id = $(this).attr("id"); 
-            
+            if($(this).attr("id") != undefined)
+                id = $(this).attr("id");
+
             // if termName matches abbreviation in glossary
             var term = Glossary[termName];
             var termToDefineElem = $("#" + id);
@@ -108,16 +108,16 @@ function bindTermToDefine() {
             $("#" + id).addClass("enlarge");
 
         }).on("mouseout", function () {
-        var id = $(this).attr("id");
-        var termToDefineElem = $("#" + id);
-        var termDefinitionElem = $("#" + id + "Definition");
+            var id = $(this).attr("id");
+            var termToDefineElem = $("#" + id);
+            var termDefinitionElem = $("#" + id + "Definition");
 
-        termDefinitionElem.hide();
-        $("#" + id).removeClass("enlarge");
-    });
+            termDefinitionElem.hide();
+            $("#" + id).removeClass("enlarge");
+        });
 }
 
-//use custom template by passing a 
+// use custom template by passing a
 // html string of the custom tooltip element
 function termDisplay(e) {
     var $self = $(this);
@@ -131,44 +131,48 @@ function termDisplay(e) {
     if (definition || term) {
         var popoverTemplate = $(default_template);
 
+        if(!term || term.length === 0){
+            popoverTemplate.find(".default-tooltip-title").detach();
+        }
+
         var options = {
+            tooltipClass: "default-tooltip",
             items: "[data-term]",// can use multiple elements
             placement: 'top',
             title: term
         };
 
         if(!e.data) {
-            popoverTemplate.find(".popover-title").text(term);
-            popoverTemplate.find(".popover-content").text(definition);
+            popoverTemplate.find(".default-tooltip-title").text(term);
+            popoverTemplate.find(".default-tooltip-content").text(definition);
         }
         else {
             if(e.data.titleClass)
                 popoverTemplate.find("." + e.data.titleClass).text(term);
             else
-                popoverTemplate.find(".popover-title").text(term);
+                popoverTemplate.find(".default-tooltip-title").text(term);
 
             if(e.data.contentClass)
                 popoverTemplate.find("." + e.data.contentClass).text(definition);
             else
-                popoverTemplate.find(".popover-content").text(definition);        
-            if(e.data.template) 
-                popoverTemplate = $(e.data.template);        
+                popoverTemplate.find(".default-tooltip-content").text(definition);
+            if(e.data.template)
+                popoverTemplate = $(e.data.template);
             if(e.data.tooltipContainerClass)
                 options.tooltipClass = e.data.tooltipContainerClass;
-            else
-                options.tooltipClass = "popover";
         }
 
         options['content'] = function() {
             return popoverTemplate;
         }
 
+        $self.tooltip();
+
         $self.tooltip(options).on('mouseout', function () {
             $self.tooltip('close');
             $self.tooltip('destroy');
         });
 
-        $self.tooltip();
         $self.tooltip('open');
     }
 }

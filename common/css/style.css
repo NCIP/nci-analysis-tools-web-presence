@@ -200,9 +200,11 @@ header img {
     color: #444;
     padding:25px 0;
 }
+
 .footer ul {
     text-align: center;
 }
+
 .footer ul li a {
     color: #444;
 }
@@ -212,14 +214,19 @@ header img {
     min-width:400px;
 }
 
-.popover {
-    max-width: 300px;
-    background-color: beige;
-    padding: 5px;
-    border: 1px solid;
-    border-radius: 5px;
+.default-tooltip {
+    padding: 0 !important;
+    max-width: 300px !important;
+    border-radius: 10px !important;
+    border-width: 2px !important;
+    font-size: 0.9em !important;
 }
-
-.popover-content {
-    background-color: beige;
+.default-tooltip-title {
+    padding: 5px;
+    background: lightblue;
+    font-weight: bold;
+}
+.default-tooltip-content {
+    padding: 10px 5px;
+    background: azure;
 }
