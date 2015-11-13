@@ -28,7 +28,7 @@
         tooltipContainerClass: containerClassName,
     };
 
-    $(document).on("click", ".classForTooltips", customOptions, termDisplay);
+    $(document).on("click touchstart", ".classForTooltips", customOptions, termDisplay);
 
 **/
 var default_template = "<div><div class='arrow'></div><div class='default-tooltip-title'></div><div class='default-tooltip-content'></div></div>";
@@ -94,11 +94,11 @@ function termDisplay(e) {
             return popoverTemplate;
         }
 
-        tooltipObj = $self.tooltip(options);
-
-        tooltipObj.on('mouseout', function () {
-            $self.tooltip('close');
-        });
+        if (!$self.data('ui-tooltip')) {
+          var close = function() { $self.tooltip('close'); }
+          $self.tooltip(options).on('mouseout', close);
+          $(document).on('touchend', close);
+        }
 
         $self.tooltip('open');
     }
